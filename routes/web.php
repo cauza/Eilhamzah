@@ -25,3 +25,4 @@ Route::get('/paket/rooms', 'RoomController@index')->name('paket.rooms');
 Route::get('/paket/order', 'PaketController@index')->name('paket.order');
 Route::get('/paket/jamaah', 'PaketController@jamaah')->name('paket.jamaah');
 Route::get('/pembayaran/{id}', 'PaketController@payment')->name('paket.payments');
+Route::get('/nik', 'PaketController@getNama');

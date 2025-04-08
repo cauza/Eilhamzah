@@ -29,11 +29,11 @@
                                 <select class="form-control single-selection p-1" name="id_group" id="id_group" >
                                     <option value="">- Pilih Group -</option>
                                     @foreach ($group as $gr)
-                                        @if ( request('id_group') == $gr->id)
+                                        {{-- @if ( request('id_group') == $gr->id)
                                             <option value="{{ $gr->ID_GROUP }}" selected>{{ $gr->KODE_GROUP }} ({{ date('j F Y', strtotime($gr->TANGGAL_KEBERANGKATAN)) }})</option>
-                                        @else
+                                        @else --}}
                                             <option value="{{ $gr->ID_GROUP }}">{{ $gr->KODE_GROUP }} ({{ date('j F Y', strtotime($gr->TANGGAL_KEBERANGKATAN)) }})</option>
-                                        @endif
+                                        {{-- @endif --}}
                                     @endforeach
                                 </select>
                             </div>

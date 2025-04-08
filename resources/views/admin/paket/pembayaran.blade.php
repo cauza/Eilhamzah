@@ -39,7 +39,7 @@
                                         <tr>
                                             <th width="40px">Id</th>
                                             <th>Nama Jamaah</th>
-                                            <th>NIK</th>
+                                            <th>NIK - Paspor Manifest - Paspor Terdaftar</th>
                                             <th>Harga Paket</th>
                                             <th>Biaya Tambahan</th>
                                             <th>Diskon</th>
@@ -48,19 +48,24 @@
                                     <tbody>
                                       @php
                                           $no = 1;
+                                          $total_tagihan = 0;
                                       @endphp
                                        @foreach ($paket->jamaah as $val)
                                             <tr>
                                                 <td>{{ $val->ID }}</td>
                                                 <td>{{ strtoupper($val->z_nama_ktp) }}</td>
-                                                <td>{{ !empty($val->data->NIK)? strtoupper($val->data->NIK) :'NaN' }} - {{strtoupper($val->z_nomor_paspor)}} - {{strtoupper($val->data->NO_PASPOR)}}</td>
+                                                <td>{{ !empty($val->data->NIK)? strtoupper($val->data->NIK) :'NaN' }} - {{!empty($val->z_nomor_paspor)? strtoupper($val->z_nomor_paspor) : 'NaN'}} - {{!empty($val->data->NIK)? strtoupper($val->data->NO_PASPOR) :'NaN'}}</td>
                                                 <td class="text-right">{{ !empty($val->z_harga_paket_idr)?'Rp. '. number_format($val->z_harga_paket_idr) : number_format($val->z_harga_paket_usd) }}</td>
                                                 <td class="text-right">{{ !empty($val->z_tambahan_idr)?'Rp. '. number_format($val->z_tambahan_idr) : number_format($val->z_tambahan_usd) }}</td>
                                                 <td class="text-right">{{ !empty($val->z_diskon_idr)?'Rp. '. number_format($val->z_diskon_idr) : number_format($val->z_diskon_usd)  }}</td>
                                             </tr>
-                                        @php $no++; @endphp
+                                        @php 
+                                            $no++; 
+                                            $total_tagihan += $val->z_harga_paket_idr + $val->z_tambahan_idr - $val->z_diskon_idr;
+                                        @endphp
                                         @endforeach
                                     </tbody>
+                                    <thead><th colspan="3">Total</th><th colspan="3">Rp. {{ number_format($total_tagihan) }}</th></thead>
                                 </table>
                             </div>
                         </div>
@@ -108,6 +113,7 @@
                                     <tbody>
                                       @php
                                           $no = 1;
+                                          $total_bayar =0;
                                       @endphp
                                        @foreach ($payments as $val)
                                             <tr>
@@ -121,8 +127,10 @@
                                                 <td>{{ $val->JAMAAH }}</td>
                                                 <td>{{ $val->CATATAN }}</td>
                                             </tr>
+                                            @php $total_bayar += $val->JUMLAH_RP; @endphp
                                         @endforeach
                                     </tbody>
+                                    <thead><th colspan="6">Total</th><th colspan="3">Rp. {{ number_format($total_bayar) }}</th></thead>
                                 </table>
                             </div>
                             {!! $payments->appends(\Request::except('page'))->render() !!}

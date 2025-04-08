@@ -7,6 +7,7 @@ use App\Departures;
 use App\Pakets;
 use App\Payments;
 use App\PaketDetails;
+use App\DataJamaahs;
 
 class PaketController extends Controller
 {
@@ -72,11 +73,58 @@ class PaketController extends Controller
         return view('admin.paket.pembayaran', compact('payments','paket'));
     }
 
-    public function jamaah()
+    public function jamaah(Request $request)
     {
-        $jamaahs = PaketDetails::orderBy('KODE_BOOKING', 'DESC')->paginate(10);
+
+        $query = PaketDetails::query();
+
+        // Filter berdasarkan nama
+        if ($request->filled('nama')) {
+            $query->where('z_nama_ktp', 'like', '%' . $request->nama . '%');
+        }
+
+        // Filter berdasarkan nik
+        if ($request->filled('nik')) {
+            $query->whereHas('data', function ($q) use ($request) {
+                $q->where('NIK', $request->nik);
+            });
+        }
+
+        // Filter berdasarkan tanggal berangkat
+        if ($request->filled('tanggal_berangkat')) {
+            $query->where('z_group', $request->tanggal_berangkat);
+        }
+
+        $jamaahs = $query->orderBy('z_group', 'ASC')->paginate(10);
 
         // dd($jamaahs);
         return view('admin.paket.jamaahs', compact('jamaahs'));
+    }
+
+    public function getNama(Request $request)
+    {
+        $jamaah = DataJamaahs::where('NIK', '=', request()->nik)->first();
+
+        if (!empty($jamaah)) {
+            $data[] = array(
+                        'status' => 'Sudah Terdaftar',
+                        'order_id' => $jamaah->detailpaket->KODE_BOOKING,
+                        'group' => $jamaah->detailpaket->z_group,
+                        'paket' => $jamaah->detailpaket->z_paket,
+                        'program' => $jamaah->detailpaket->z_program,
+            );
+
+            return response()->json(['status' => 'success', 'data' => $data]);
+        } else {
+            $data[] = array(
+                'status' => 'Belum Terdaftar',
+                'order_id' => 0,
+                'group' => 'belum ada data',
+                'paket' => 'Jamaah Baru',
+                'program' => 'belum dipilih',
+            );
+
+            return response()->json(['status' => 'success', 'data' => $data]);
+        }
     }
 }
