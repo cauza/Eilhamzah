@@ -146,6 +146,7 @@
     </div>
 </main>
   
+<<<<<<< HEAD
 @endsection
 
 @section('js')
@@ -169,4 +170,6 @@
     });
 </script>
     
+=======
+>>>>>>> c9d9446153c680099a6a5b950da411cd186ec8a0
 @endsection
